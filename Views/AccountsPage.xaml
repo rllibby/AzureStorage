@@ -1,0 +1,81 @@
+﻿<Page x:Class="AzureStorage.Views.AccountsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:Behaviors="using:Template10.Behaviors"
+      xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+      xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+      xmlns:controls="using:Template10.Controls"
+      xmlns:user="using:AzureStorage.Controls"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="using:AzureStorage.Views"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:vm="using:AzureStorage.ViewModels" mc:Ignorable="d">
+
+    <Page.DataContext>
+        <vm:AccountsPageViewModel x:Name="ViewModel" />
+    </Page.DataContext>
+
+    <RelativePanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="AdaptiveVisualStateGroup">
+                <VisualState x:Name="VisualStateNarrow">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource NarrowMinWidth}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <!--  TODO: change properties for narrow view  -->
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="VisualStateNormal">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource NormalMinWidth}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <!--  TODO: change properties for normal view  -->
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="VisualStateWide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource WideMinWidth}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <!--  TODO: change properties for wide view  -->
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <controls:PageHeader x:Name="pageHeader" RelativePanel.AlignLeftWithPanel="True"
+                             RelativePanel.AlignRightWithPanel="True"
+                             RelativePanel.AlignTopWithPanel="True" Text="Accounts">
+        </controls:PageHeader>
+
+        <Grid x:Name="content" RelativePanel.AlignBottomWithPanel="True"
+                      RelativePanel.AlignLeftWithPanel="True"
+                      RelativePanel.AlignRightWithPanel="True"
+                      RelativePanel.Below="pageHeader">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <controls:ModalDialog x:Name="AddModal" CanBackButtonDismiss="False" DisableBackButtonWhenModal="True">
+                <controls:ModalDialog.ModalContent>
+                    <user:AccountControl x:Name="addAccount"
+                                  VerticalAlignment="Center"
+                                  OnAdd="OnAddAccount" OnCancel="OnCancel" Margin="40,0" />
+                </controls:ModalDialog.ModalContent>
+            </controls:ModalDialog>
+
+            <StackPanel Grid.Row="0" Padding="10,20">
+                <TextBlock Text="Storage Accounts" />
+                <ComboBox x:Name="accounts" Margin="0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                          ItemsSource="{x:Bind ViewModel.Accounts.Accounts}" SelectedIndex="{x:Bind ViewModel.Accounts.SelectedIndex, Mode=TwoWay}"/>
+            </StackPanel>
+            <CommandBar x:Name="bottomBar" Grid.Row="1">
+                <AppBarButton x:Name="add" Icon="Add" Label="Add" Click="AddAccount" />
+                <AppBarButton Icon="Delete" Label="Delete" Command="{x:Bind ViewModel.Accounts.Delete}" />
+            </CommandBar>
+        </Grid>
+    </RelativePanel>
+</Page>
