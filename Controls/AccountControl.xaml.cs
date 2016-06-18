@@ -4,6 +4,7 @@
 
 using AzureStorage.Models;
 using System;
+using Template10.Mvvm;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -17,6 +18,7 @@ namespace AzureStorage.Controls
         #region Private properties
 
         private readonly AccountModel _account = new AccountModel();
+        private DelegateCommand _add;
 
         #endregion
 
@@ -29,15 +31,16 @@ namespace AzureStorage.Controls
         /// <param name="e">The routed event arguments.</param>
         private void OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            addButton.IsEnabled = (!string.IsNullOrEmpty(nameText.Text) && !string.IsNullOrEmpty(keyText.Text));
+            if (sender.Equals(nameText)) _account.AccountName = nameText.Text;
+            if (sender.Equals(keyText)) _account.AccountKey = keyText.Text;
         }
 
         /// <summary>
-        /// Event that is triggered when the add button is clicked.
+        /// Event that is triggered when add is clicked.
         /// </summary>
         /// <param name="sender">The sender of the event.</param>
-        /// <param name="e">The routed event arguments.</param>
-        private void AddClicked(object sender, RoutedEventArgs e)
+        /// <param name="e">The event arguments.</param>
+        private void AddClicked(object sender, EventArgs e)
         {
             OnAdd?.Invoke(this, EventArgs.Empty);
         }
@@ -62,6 +65,8 @@ namespace AzureStorage.Controls
         public AccountControl()
         {
             InitializeComponent();
+
+            _account.OnAdd += AddClicked;
         }
 
         #endregion
@@ -77,6 +82,14 @@ namespace AzureStorage.Controls
         /// Event handler to notify when added.
         /// </summary>
         public event EventHandler OnAdd;
+
+        /// <summary>
+        /// The delegate command for adding an account.
+        /// </summary>
+        public DelegateCommand Add
+        {
+            get { return _add; }
+        }
 
         /// <summary>
         /// The account model.

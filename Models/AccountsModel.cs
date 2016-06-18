@@ -162,7 +162,7 @@ namespace AzureStorage.Models
             {
                 if (_index != value)
                 {
-                    if (!((value < 0) && (_accounts.Count > 0))) _index = value;
+                    if (value < _accounts.Count) _index = value;
 
                     base.RaisePropertyChanged();
                 }

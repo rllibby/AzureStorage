@@ -63,7 +63,7 @@
                 <controls:ModalDialog.ModalContent>
                     <user:AccountControl x:Name="addAccount"
                                   VerticalAlignment="Center"
-                                  OnAdd="OnAddAccount" OnCancel="OnCancel" Margin="40,0" />
+                                  OnAdd="OnAddAccount" OnCancel="OnCancel" Margin="20,0" />
                 </controls:ModalDialog.ModalContent>
             </controls:ModalDialog>
 
@@ -71,6 +71,7 @@
                 <TextBlock Text="Storage Accounts" />
                 <ComboBox x:Name="accounts" Margin="0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
                           ItemsSource="{x:Bind ViewModel.Accounts.Accounts}" SelectedIndex="{x:Bind ViewModel.Accounts.SelectedIndex, Mode=TwoWay}"/>
+                <HyperlinkButton Margin="0,10" Content="Azure Portal" NavigateUri="https://portal.azure.com"/>
             </StackPanel>
             <CommandBar x:Name="bottomBar" Grid.Row="1">
                 <AppBarButton x:Name="add" Icon="Add" Label="Add" Click="AddAccount" />

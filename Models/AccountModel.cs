@@ -21,8 +21,30 @@ namespace AzureStorage.Models
 
         #region Private fields
 
+        private DelegateCommand _add;
         private string _name;
         private string _key;
+
+        #endregion
+
+        #region Private methods
+
+        /// <summary>
+        /// Determines if the account defintion can be added.
+        /// </summary>
+        /// <returns></returns>
+        private bool CanAddAccount()
+        {
+            return (!string.IsNullOrEmpty(_name) && !string.IsNullOrEmpty(_key));
+        }
+
+        /// <summary>
+        /// Action called when adding an account.
+        /// </summary>
+        private void AddAccount()
+        {
+            OnAdd?.Invoke(this, EventArgs.Empty);
+        }
 
         #endregion
 
@@ -31,7 +53,10 @@ namespace AzureStorage.Models
         /// <summary>
         /// Constructor.
         /// </summary>
-        public AccountModel() { }
+        public AccountModel()
+        {
+            _add = new DelegateCommand(new Action(AddAccount), CanAddAccount);
+        }
 
         /// <summary>
         /// Constructor.
@@ -53,8 +78,12 @@ namespace AzureStorage.Models
         /// </summary>
         public void Clear()
         {
-            AccountName = null;
-            AccountKey = null;
+            _name = _key = null;
+
+            _add.RaiseCanExecuteChanged();
+
+            RaisePropertyChanged("AccountName");
+            RaisePropertyChanged("AccountKey");
         }
         
         /// <summary>
@@ -71,12 +100,16 @@ namespace AzureStorage.Models
         #region Public properties
 
         /// <summary>
-        /// Determines if the account can be added.
+        /// Event handler to notify when added.
         /// </summary>
-        [JsonIgnore]
-        public bool CanAdd
+        public event EventHandler OnAdd;
+
+        /// <summary>
+        /// Delegate command for adding an account.
+        /// </summary>
+        public DelegateCommand Add
         {
-            get { return (!string.IsNullOrEmpty(_name) && !string.IsNullOrEmpty(_key)); }
+            get { return _add; }
         }
 
         /// <summary>
@@ -89,7 +122,7 @@ namespace AzureStorage.Models
             {
                 _name = value;
 
-                RaisePropertyChanged("CanAdd");
+                _add.RaiseCanExecuteChanged();
                 base.RaisePropertyChanged();
             }
         }
@@ -104,7 +137,7 @@ namespace AzureStorage.Models
             {
                 _key = value;
 
-                RaisePropertyChanged("CanAdd");
+                _add.RaiseCanExecuteChanged();
                 base.RaisePropertyChanged();
             }
         }

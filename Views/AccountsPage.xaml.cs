@@ -2,13 +2,17 @@
  *  Copyright © 2016, Russell Libby 
  */
 
+using AzureStorage.Controls;
 using AzureStorage.Helpers;
 using AzureStorage.Models;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using System;
 using System.Threading.Tasks;
+using Template10.Common;
+using Template10.Controls;
 using Windows.UI.Core;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -30,11 +34,15 @@ namespace AzureStorage.Views
         /// <param name="e">The event arguments.</param>
         private void OnAddAccount(object sender, EventArgs e)
         {
-            AddModal.IsModal = false;
-            accounts.IsEnabled = true;
-            add.IsEnabled = true;
+            WindowWrapper.Current().Dispatcher.Dispatch(() =>
+            {
+                var modal = Window.Current.Content as ModalDialog;
 
-            Busy.SetBusy(true, "Validating account with Azure...");
+                modal.ModalContent = addAccount;
+                modal.IsModal = false;
+            });
+
+            Busy.SetBusy(true, "Verifying account...");
 
             Task.Run(async () =>
             {
@@ -50,7 +58,7 @@ namespace AzureStorage.Views
                 {
                     Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                     {
-                        await Dialogs.Show("Validation Failed", "Failed to validate the specified Azure storage account.");
+                        await Dialogs.Show(addAccount.Account.AccountName, "Failed to verify the specified Azure storage account.");
 
                         accounts.IsEnabled = false;
                         add.IsEnabled = false;
@@ -77,9 +85,13 @@ namespace AzureStorage.Views
         /// <param name="e">The event arguments.</param>
         private void OnCancel(object sender, EventArgs e)
         {
-            accounts.IsEnabled = true;
-            add.IsEnabled = true;
-            AddModal.IsModal = false;
+            WindowWrapper.Current().Dispatcher.Dispatch(() =>
+            {
+                var modal = Window.Current.Content as ModalDialog;
+
+                modal.ModalContent = addAccount;
+                modal.IsModal = false;
+            });
         }
 
         /// <summary>
@@ -90,9 +102,14 @@ namespace AzureStorage.Views
         private void AddAccount(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             addAccount.Account.Clear();
-            accounts.IsEnabled = false;
-            add.IsEnabled = false;
-            AddModal.IsModal = true;
+
+            WindowWrapper.Current().Dispatcher.Dispatch(() =>
+            {
+                var modal = Window.Current.Content as ModalDialog;
+
+                modal.ModalContent = addAccount;
+                modal.IsModal = true;
+            });
         }
 
         #endregion

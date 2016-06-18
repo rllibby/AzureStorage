@@ -12,20 +12,14 @@ namespace AzureStorage.ViewModels
     {
         public MainPageViewModel()
         {
-            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
-            {
-                Value = "Designtime value";
-            }
+   
         }
 
-        string _Value = "Gas";
-        public string Value { get { return _Value; } set { Set(ref _Value, value); } }
-
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> suspensionState)
+         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> suspensionState)
         {
             if (suspensionState.Any())
             {
-                Value = suspensionState[nameof(Value)]?.ToString();
+            
             }
             await Task.CompletedTask;
         }
@@ -34,7 +28,7 @@ namespace AzureStorage.ViewModels
         {
             if (suspending)
             {
-                suspensionState[nameof(Value)] = Value;
+             
             }
             await Task.CompletedTask;
         }
@@ -46,7 +40,7 @@ namespace AzureStorage.ViewModels
         }
 
         public void GotoDetailsPage() =>
-            NavigationService.Navigate(typeof(Views.DetailPage), Value, new SuppressNavigationTransitionInfo());
+            NavigationService.Navigate(typeof(Views.DetailPage), 0, new SuppressNavigationTransitionInfo());
 
         public void GotoSettings() =>
             NavigationService.Navigate(typeof(Views.SettingsPage), 0, new SuppressNavigationTransitionInfo());

@@ -2,9 +2,7 @@
  *  Copyright © 2016, Russell Libby 
  */
 
-using AzureStorage.Helpers;
 using AzureStorage.Models;
-using System;
 using Template10.Mvvm;
 
 namespace AzureStorage.ViewModels
@@ -22,10 +20,6 @@ namespace AzureStorage.ViewModels
         public AccountsPageViewModel()
         {
         }
-
-        #endregion
-
-        #region Public methods
 
         #endregion
 
