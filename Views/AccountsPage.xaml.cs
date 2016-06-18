@@ -28,19 +28,28 @@ namespace AzureStorage.Views
         #region Private methods
 
         /// <summary>
-        /// Event that is triggered when adding a new account.
+        /// Shows or hides the add account modal dialog.
         /// </summary>
-        /// <param name="sender">The sender of the event.</param>
-        /// <param name="e">The event arguments.</param>
-        private void OnAddAccount(object sender, EventArgs e)
+        /// <param name="show">True to show the dialog, false to hide.</param>
+        private void ShowAddAccount(bool show)
         {
             WindowWrapper.Current().Dispatcher.Dispatch(() =>
             {
                 var modal = Window.Current.Content as ModalDialog;
 
                 modal.ModalContent = addAccount;
-                modal.IsModal = false;
+                modal.IsModal = show;
             });
+        }
+
+        /// <summary>
+        /// Event that is triggered when adding a new account.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnAddAccount(object sender, EventArgs e)
+        {
+            ShowAddAccount(false);
 
             Busy.SetBusy(true, "Verifying account...");
 
@@ -58,13 +67,10 @@ namespace AzureStorage.Views
                 {
                     Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                     {
-                        await Dialogs.Show(addAccount.Account.AccountName, "Failed to verify the specified Azure storage account.");
+                        await Dialogs.Show(addAccount.Account.AccountName, "Failed to verify the specified storage account.");
 
-                        accounts.IsEnabled = false;
-                        add.IsEnabled = false;
-                        AddModal.IsModal = true;
+                        ShowAddAccount(true);
                     });
-
                     return;
                 }
                 
@@ -85,13 +91,7 @@ namespace AzureStorage.Views
         /// <param name="e">The event arguments.</param>
         private void OnCancel(object sender, EventArgs e)
         {
-            WindowWrapper.Current().Dispatcher.Dispatch(() =>
-            {
-                var modal = Window.Current.Content as ModalDialog;
-
-                modal.ModalContent = addAccount;
-                modal.IsModal = false;
-            });
+            ShowAddAccount(false);
         }
 
         /// <summary>
@@ -99,17 +99,11 @@ namespace AzureStorage.Views
         /// </summary>
         /// <param name="sender">The sender of the event.</param>
         /// <param name="e">The event arguments.</param>
-        private void AddAccount(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void AddAccount(object sender, RoutedEventArgs e)
         {
             addAccount.Account.Clear();
 
-            WindowWrapper.Current().Dispatcher.Dispatch(() =>
-            {
-                var modal = Window.Current.Content as ModalDialog;
-
-                modal.ModalContent = addAccount;
-                modal.IsModal = true;
-            });
+            ShowAddAccount(true);
         }
 
         #endregion
