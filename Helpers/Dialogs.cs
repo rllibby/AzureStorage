@@ -5,8 +5,6 @@
 using System;
 using System.Threading.Tasks;
 using Windows.UI.Popups;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace AzureStorage.Helpers
 {
@@ -66,7 +64,7 @@ namespace AzureStorage.Helpers
             var dialog = new MessageDialog(message, title);
 
             dialog.Commands.Add(new UICommand(Ok, CommandOk, 1));
-            dialog.Commands.Add(new UICommand(Ok, CommandCancel, 0));
+            dialog.Commands.Add(new UICommand(Cancel, CommandCancel, 0));
 
             var command = await dialog.ShowAsync().AsTask();
 

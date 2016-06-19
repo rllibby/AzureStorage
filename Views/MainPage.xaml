@@ -14,57 +14,41 @@
         <vm:MainPageViewModel x:Name="ViewModel" />
     </Page.DataContext>
 
-    <RelativePanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="AdaptiveVisualStateGroup">
-                <VisualState x:Name="VisualStateNarrow">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="{StaticResource NarrowMinWidth}" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <!--  TODO: change properties for narrow view  -->
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="VisualStateNormal">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="{StaticResource NormalMinWidth}" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <!--  TODO: change properties for normal view  -->
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="VisualStateWide">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="{StaticResource WideMinWidth}" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <!--  TODO: change properties for wide view  -->
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
-
-        <controls:PageHeader x:Name="pageHeader" RelativePanel.AlignLeftWithPanel="True"
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+         <controls:PageHeader Grid.Row="0" x:Name="pageHeader" RelativePanel.AlignLeftWithPanel="True"
                              RelativePanel.AlignRightWithPanel="True"
-                             RelativePanel.AlignTopWithPanel="True" Text="Resources">
+                             RelativePanel.AlignTopWithPanel="True" Text="{Binding Name, Mode=OneWay}">
          </controls:PageHeader>
 
-        <Pivot x:Name="MyPivot" RelativePanel.AlignBottomWithPanel="True"
-               RelativePanel.AlignLeftWithPanel="True"
-               RelativePanel.AlignRightWithPanel="True"
-               RelativePanel.Below="pageHeader">
-            
-            <PivotItem Header="Blob Containers" />
-            <PivotItem Header="Queues" />
-            <PivotItem Header="Tables" />
+        <Pivot x:Name="MyPivot" Grid.Row="1" SelectionChanged="{x:Bind ViewModel.SelectionChanged}">
+            <PivotItem Header="Blob Containers">
+                <ListView x:Name="blobList" ItemsSource="{x:Bind ViewModel.Resources.BlobContainers}"
+                         ItemTemplate="{StaticResource ResourcesItemTemplate}" ItemContainerStyle="{StaticResource ListViewContainerStyle}" />
+            </PivotItem>
+            <PivotItem Header="Queues">
+                <ListView x:Name="queueList" ItemsSource="{x:Bind ViewModel.Resources.Queues}"
+                         ItemTemplate="{StaticResource ResourcesItemTemplate}" ItemContainerStyle="{StaticResource ListViewContainerStyle}" />
+
+            </PivotItem>
+            <PivotItem Header="Tables">
+                <ListView x:Name="tableList" ItemsSource="{x:Bind ViewModel.Resources.Tables}"
+                         ItemTemplate="{StaticResource ResourcesItemTemplate}" ItemContainerStyle="{StaticResource ListViewContainerStyle}" />
+
+            </PivotItem> 
         </Pivot>
-        
-        <ProgressRing RelativePanel.AlignBottomWithPanel="True"
-               RelativePanel.AlignLeftWithPanel="True"
-               RelativePanel.AlignRightWithPanel="True"
-               RelativePanel.Below="pageHeader" MinWidth="100" MinHeight="100" IsActive="True">
-        </ProgressRing>
-    </RelativePanel>
+        <CommandBar x:Name="bottomBar" Grid.Row="2">
+            <CommandBar.SecondaryCommands>
+                <AppBarButton x:Name="refresh" Icon="Refresh" Label="Refresh" Command="{x:Bind ViewModel.Refresh}" />
+            </CommandBar.SecondaryCommands>
+            <AppBarButton x:Name="add" Icon="Add" Label="Add" />
+            <AppBarButton Icon="Delete" Label="Delete" Command="{x:Bind ViewModel.Resources.Delete}" />
+        </CommandBar>
+        <ProgressRing Grid.Row="1" MinWidth="100" MinHeight="100" IsActive="{x:Bind ViewModel.Resources.Loading, Mode=OneWay}" />
+    </Grid>
 </Page>
 

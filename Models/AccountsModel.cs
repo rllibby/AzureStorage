@@ -145,6 +145,14 @@ namespace AzureStorage.Models
         }
 
         /// <summary>
+        /// Returns the selected account instance.
+        /// </summary>
+        public AccountModel Current
+        {
+            get {  return ((_index < 0) ? null : _accounts[_index]); }
+        }
+
+        /// <summary>
         /// The collection of accounts.
         /// </summary>
         public ObservableCollectionEx<AccountModel> Accounts
@@ -163,6 +171,7 @@ namespace AzureStorage.Models
                 if (_index != value)
                 {
                     if (value < _accounts.Count) _index = value;
+                    ApplicationData.Current.LocalSettings.Values[SavedIndex] = _index;
 
                     base.RaisePropertyChanged();
                 }

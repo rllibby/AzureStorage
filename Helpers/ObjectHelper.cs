@@ -1,5 +1,5 @@
 ﻿/*
- *  Copyright © 2016, Sage Software, Inc.
+ *  Copyright © 2016, Russell Libby
  */
 
 using System;
