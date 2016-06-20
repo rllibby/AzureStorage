@@ -20,32 +20,32 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-         <controls:PageHeader Grid.Row="0" x:Name="pageHeader" RelativePanel.AlignLeftWithPanel="True"
+        <controls:PageHeader Grid.Row="0" x:Name="pageHeader" RelativePanel.AlignLeftWithPanel="True"
                              RelativePanel.AlignRightWithPanel="True"
                              RelativePanel.AlignTopWithPanel="True" Text="{Binding Name, Mode=OneWay}">
-         </controls:PageHeader>
+        </controls:PageHeader>
 
         <Pivot x:Name="MyPivot" Grid.Row="1" SelectionChanged="{x:Bind ViewModel.SelectionChanged}">
             <PivotItem Header="Blob Containers">
                 <ListView x:Name="blobList" ItemsSource="{x:Bind ViewModel.Resources.BlobContainers}"
-                         ItemTemplate="{StaticResource ResourcesItemTemplate}" ItemContainerStyle="{StaticResource ListViewContainerStyle}" />
+                          ItemTemplate="{StaticResource ResourcesItemTemplate}" ItemContainerStyle="{StaticResource ListViewContainerStyle}" />
             </PivotItem>
             <PivotItem Header="Queues">
                 <ListView x:Name="queueList" ItemsSource="{x:Bind ViewModel.Resources.Queues}"
-                         ItemTemplate="{StaticResource ResourcesItemTemplate}" ItemContainerStyle="{StaticResource ListViewContainerStyle}" />
+                          ItemTemplate="{StaticResource ResourcesItemTemplate}" ItemContainerStyle="{StaticResource ListViewContainerStyle}" />
 
             </PivotItem>
             <PivotItem Header="Tables">
                 <ListView x:Name="tableList" ItemsSource="{x:Bind ViewModel.Resources.Tables}"
-                         ItemTemplate="{StaticResource ResourcesItemTemplate}" ItemContainerStyle="{StaticResource ListViewContainerStyle}" />
-
-            </PivotItem> 
+                          ItemTemplate="{StaticResource ResourcesItemTemplate}" ItemContainerStyle="{StaticResource ListViewContainerStyle}" />
+            </PivotItem>
         </Pivot>
         <CommandBar x:Name="bottomBar" Grid.Row="2">
             <CommandBar.SecondaryCommands>
                 <AppBarButton x:Name="refresh" Icon="Refresh" Label="Refresh" Command="{x:Bind ViewModel.Refresh}" />
             </CommandBar.SecondaryCommands>
-            <AppBarButton x:Name="add" Icon="Add" Label="Add" />
+            <AppBarButton Icon="Add" Label="Add" Command="{x:Bind ViewModel.Add}" />
+            <AppBarToggleButton Label="Select" Icon="Bullets" IsChecked="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}" />
             <AppBarButton Icon="Delete" Label="Delete" Command="{x:Bind ViewModel.Resources.Delete}" />
         </CommandBar>
         <ProgressRing Grid.Row="1" MinWidth="100" MinHeight="100" IsActive="{x:Bind ViewModel.Resources.Loading, Mode=OneWay}" />

@@ -3,8 +3,11 @@
  */
 
 using System;
+using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Popups;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace AzureStorage.Helpers
 {
@@ -37,6 +40,63 @@ namespace AzureStorage.Helpers
         #endregion
 
         #region Public methods
+
+        /// <summary>
+        /// Show exception dialog.
+        /// </summary>
+        /// <param name="title">The title for the dialog.</param>
+        /// <param name="header">The header for the error message.</param>
+        /// <param name="exception">The exception information.</param>
+        /// <param name="allowCancel">True if the cancel button should be enabled.</param>
+        /// <returns></returns>
+        public static async Task<bool> ShowException(string title, string header, Exception exception, bool allowCancel = true)
+        {
+            if (exception == null) throw new ArgumentNullException("exception");
+
+            var dialog = new ContentDialog()
+            {
+                Title = title,
+                MaxWidth = Window.Current.Content.RenderSize.Width - 40,
+                MaxHeight = Window.Current.Content.RenderSize.Height - 40
+            };
+
+            var temp = new StringBuilder();
+
+            temp.AppendLine(header);
+            temp.AppendLine();
+            temp.AppendLine(exception.ToString());
+
+            var viewer = new ScrollViewer
+            {
+                Margin = new Thickness(8, 8, 8, 8),
+                HorizontalContentAlignment = HorizontalAlignment.Left,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                MaxHeight = 400,
+                MaxWidth = Window.Current.Content.RenderSize.Width - 80,
+            };
+
+            var text = new TextBlock
+            {
+                Text = temp.ToString(),
+                TextWrapping = TextWrapping.Wrap,
+            };
+
+            viewer.Content = text;
+            dialog.Content = viewer;
+
+            bool result = false;
+
+            dialog.PrimaryButtonText = Ok;
+            dialog.SecondaryButtonText = Cancel;
+            dialog.IsPrimaryButtonEnabled = true;
+            dialog.IsSecondaryButtonEnabled = allowCancel;
+            dialog.PrimaryButtonClick += delegate { result = true; };
+            dialog.SecondaryButtonClick += delegate { result = false; };
+
+            await dialog.ShowAsync();
+
+            return result;
+        }
 
         /// <summary>
         /// Shows a dialog to the user.

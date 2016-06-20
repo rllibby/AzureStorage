@@ -20,16 +20,17 @@
     </Style>
 
     <DataTemplate x:Key="ResourcesItemTemplate">
-        <Grid x:Name="blobItem" Margin="2" Padding="8,8" BorderBrush="#FF6BB0ED" BorderThickness="1">
+        <Grid x:Name="resourceItem" Margin="2" Padding="8,4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="48" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <CheckBox VerticalAlignment="Center" MaxWidth="30" Grid.Column="0" 
-                                    IsChecked="{Binding Selected, Mode=TwoWay}" MinHeight="0" Margin="0" HorizontalAlignment="Left" MinWidth="0" />
-            <StackPanel Grid.Column="1">
-                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"  />
-                <TextBlock Text="{Binding Uri}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+            <CheckBox VerticalAlignment="Center" Width="30" MaxWidth="30" Grid.Column="0" Visibility="{Binding SelectionMode, Converter={StaticResource BooleanToVisibility}, Mode=OneWay}" IsChecked="{Binding Selected, Mode=TwoWay}" Margin="0" HorizontalAlignment="Center" HorizontalContentAlignment="Left" MinWidth="30" MinHeight="30" MaxHeight="30" />
+            <Image Grid.Column="1" Source="{Binding ResourceImage}" Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="32" MinHeight="32" MaxWidth="32" MaxHeight="32" />
+            <StackPanel Grid.Column="2">
+                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left"  />
+                <TextBlock Text="{Binding Uri}" Foreground="{ThemeResource SystemControlHighlightAltListAccentLowBrush}"  VerticalAlignment="Center" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" />
             </StackPanel>
         </Grid>
     </DataTemplate>

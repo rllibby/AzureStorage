@@ -68,7 +68,7 @@ namespace AzureStorage.Models
         /// <summary>
         /// Deletes the current account.
         /// </summary>
-        private void DeleteAccount()
+        private async void DeleteAccount()
         {
             if ((_index < 0) || (_index >= _accounts.Count))
             {
@@ -77,9 +77,13 @@ namespace AzureStorage.Models
             }
 
             var index = _index;
+            var account = _accounts[_index];
+            var result = await Dialogs.ShowOkCancel(account.AccountName, string.Format("Delete the storage account '{0}'?", account.AccountName));
+
+            if (!result) return;
 
             try
-            {
+                {
                 _accounts.RemoveAt(index);
 
                 while (index >= _accounts.Count) index--;

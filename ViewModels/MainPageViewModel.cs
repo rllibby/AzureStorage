@@ -2,12 +2,19 @@
  *  Copyright © 2016, Russell Libby 
  */
 
+using AzureStorage.Controls;
 using AzureStorage.Models;
+using AzureStorage.Views;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Template10.Common;
+using Template10.Controls;
 using Template10.Mvvm;
 using Template10.Services.NavigationService;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -20,8 +27,11 @@ namespace AzureStorage.ViewModels
     {
         #region Private fields
 
+        private AddResourceControl _addResource = new AddResourceControl();
         private ResourceContainersModel _resources;
         private DelegateCommand _refresh;
+        private DelegateCommand _add;
+        private bool _selectionMode;
         private int _index;
 
         #endregion
@@ -29,17 +39,178 @@ namespace AzureStorage.ViewModels
         #region Private methods
 
         /// <summary>
+        /// Shows or hides the add resource modal dialog.
+        /// </summary>
+        /// <param name="show">True to show the dialog, false to hide.</param>
+        private void ShowAddResource(bool show)
+        {
+            WindowWrapper.Current().Dispatcher.Dispatch(() =>
+            {
+                var modal = Window.Current.Content as ModalDialog;
+
+                modal.ModalContent = _addResource;
+                modal.IsModal = show;
+            });
+        }
+
+        /// <summary>
+        /// Event that is triggered when the user wants to add a new resource.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The event arguments.</param>
+        private void AddResource()
+        {
+            try
+            {
+                _addResource.Resource.Name = string.Empty;
+                _addResource.Resource.ResourceType = _resources.CurrentType;
+            }
+            finally
+            {
+                ShowAddResource(true);
+            }
+        }
+
+        /// <summary>
+        /// Event that is triggered when the add button is clicked.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnAddResource(object sender, System.EventArgs e)
+        {
+            ShowAddResource(false);
+
+            var storageAccount = _resources.Account;
+
+            if (storageAccount == null) return;
+
+            Busy.SetBusy(true, "Verifying name...");
+
+            Task.Run(async () =>
+            {
+
+                var account = new CloudStorageAccount(new StorageCredentials(storageAccount.AccountName, storageAccount.AccountKey), storageAccount.SuffixEndpoint, true);
+
+                switch (_addResource.Resource.ResourceType)
+                {
+                    case ContainerType.BlobContainer:
+                        var blobClient = account.CreateCloudBlobClient();
+                        var container = blobClient.GetContainerReference(_addResource.Resource.Name);
+
+                        await container.CreateAsync();
+
+                        _addResource.Resource.Uri = container.Uri.AbsoluteUri;
+
+                        return;
+
+                    case ContainerType.Queue:
+                        var queueClient = account.CreateCloudQueueClient();
+                        var queue = queueClient.GetQueueReference(_addResource.Resource.Name);
+
+                        await queue.CreateAsync();
+
+                        _addResource.Resource.Uri = queue.Uri.AbsoluteUri;
+
+                        return;
+
+                    default:
+                        var tableClient = account.CreateCloudTableClient();
+                        var table = tableClient.GetTableReference(_addResource.Resource.Name);
+
+                        await table.CreateAsync();
+
+                        _addResource.Resource.Uri = table.Uri.AbsoluteUri;
+
+                        return;
+                }
+            }).ContinueWith((t) =>
+            {
+                Busy.SetBusy(false);
+
+                if (t.IsFaulted)
+                {
+                    WindowWrapper.Current().Dispatcher.Dispatch(async () =>
+                    {
+                        var message = string.Empty;
+
+                        switch (_addResource.Resource.ResourceType)
+                        {
+                            case ContainerType.BlobContainer:
+                                message = string.Format("Failed to create the blob container '{0}'.", _addResource.Resource.Name);
+                                break;
+
+                            case ContainerType.Queue:
+                                message = string.Format("Failed to create the queue '{0}'.", _addResource.Resource.Name);
+                                break;
+
+                            default:
+                                message = string.Format("Failed to create the table '{0}'.", _addResource.Resource.Name);
+                                break;
+                        }
+
+                        var result = await Helpers.Dialogs.ShowException(storageAccount.AccountName, message, t.Exception);
+
+                        if (!result) return;
+
+                        ShowAddResource(true);
+                    });
+
+                    return;
+                }
+
+                if (t.IsCompleted)
+                {
+                    WindowWrapper.Current().Dispatcher.Dispatch(() =>
+                    {
+                        var resource = new ResourceContainerModel(_resources, _resources.CurrentType);
+
+                        resource.Name = _addResource.Resource.Name;
+                        
+                        switch (resource.ResourceType)
+                        {
+                            case ContainerType.BlobContainer:
+                                _resources.BlobContainers.Add(resource);
+                                break;
+
+                            case ContainerType.Queue:
+                                _resources.Queues.Add(resource);
+                                break;
+
+                            default:
+                                _resources.Tables.Add(resource);
+                                break;
+                        }
+                    });
+                }
+            });
+        }
+
+        /// <summary>
+        /// Event that is triggered when the dialog is cancelled.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnCancelResource(object sender, System.EventArgs e)
+        {
+            ShowAddResource(false);
+        }
+
+        /// <summary>
+        /// Determines if a new resource can be added.
+        /// </summary>
+        /// <returns></returns>
+        private bool CanAddResource()
+        {
+            return (_resources.Account != null);
+        }
+
+        /// <summary>
         /// Loads the resources from the azure storage account.
         /// </summary>
         private void Load()
         {
             RaisePropertyChanged("Name");
-
-            Dispatcher.DispatchAsync(async () =>
-            {
-                await _resources.Load(Dispatcher);
-
-            });
+            Dispatcher.DispatchAsync(async () => { await _resources.Load(Dispatcher); });
         }
 
         #endregion
@@ -53,6 +224,12 @@ namespace AzureStorage.ViewModels
         {
             _resources = new ResourceContainersModel();
             _refresh = new DelegateCommand(new Action(Load));
+            _add = new DelegateCommand(new Action(AddResource), CanAddResource);
+            _addResource.VerticalAlignment = VerticalAlignment.Center;
+            _addResource.Margin = new Thickness(20, 0, 20, 0);
+            _addResource.OnAdd += OnAddResource;
+            _addResource.OnCancel += OnCancelResource;
+
             _index = 0;
         }
 
@@ -71,7 +248,7 @@ namespace AzureStorage.ViewModels
         {
             try
             {
-                Load();
+                if ((_resources.Account == null) || (_resources.Account != AccountsModel.Instance.Current)) Load();
             }
             finally
             {
@@ -142,6 +319,14 @@ namespace AzureStorage.ViewModels
         }
 
         /// <summary>
+        /// The command handler for the add action.
+        /// </summary>
+        public DelegateCommand Add
+        {
+            get { return _add; }
+        }
+
+        /// <summary>
         /// Gets the account name.
         /// </summary>
         public string Name
@@ -150,7 +335,23 @@ namespace AzureStorage.ViewModels
             {
                 var account = AccountsModel.Instance.Current;
 
-                return (account == null) ? "Resources" : account.AccountName;
+                return (account == null) ? "Resources" : string.Format("Account - {0}", account.AccountName);
+            }
+        }
+
+        /// <summary>
+        /// Determines if resources can be selected in the user interface.
+        /// </summary>
+        public bool? SelectionMode
+        {
+            get { return _selectionMode; }
+            set
+            {
+                _selectionMode = (value == null) ? false : value.Value;
+                _resources.SetSelectionMode(_selectionMode);
+
+
+                base.RaisePropertyChanged();
             }
         }
 

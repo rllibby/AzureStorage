@@ -60,29 +60,6 @@
                RelativePanel.AlignRightWithPanel="True"
                RelativePanel.Below="pageHeader">
 
-            <!--  settings  -->
-            <PivotItem DataContext="{Binding AccountsViewModel}" Header="Storage Accounts">
-                <ScrollViewer Margin="0,12,-12,0" HorizontalContentAlignment="Left"
-                              VerticalScrollBarVisibility="Auto">
-                    <RelativePanel HorizontalAlignment="Left">
-                        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="300" />
-                            </Grid.ColumnDefinitions>
-                            <ListView Grid.Column="0" ItemsSource="{Binding Accounts}" HorizontalContentAlignment="Stretch" MinHeight="2" ItemContainerStyle="{StaticResource ListViewContainerStyle}" BorderThickness="1,0,0,0">
-                                <ListView.ItemTemplate >
-                                    <DataTemplate x:DataType="model:AccountModel" >
-                                        <StackPanel Margin="1,1,1,1" Background="{StaticResource CustomColorBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
-                                            <TextBlock Text="{x:Bind AccountName}" Margin="10,5,10,5"  Foreground="{StaticResource ContrastColorBrush}" TextWrapping="Wrap" HorizontalAlignment="Center" FontSize="20" />
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </Grid>
-                    </RelativePanel>
-
-                </ScrollViewer>
-            </PivotItem>            
             
             <!--  settings  -->
             <PivotItem DataContext="{Binding SettingsPartViewModel}" Header="Settings">

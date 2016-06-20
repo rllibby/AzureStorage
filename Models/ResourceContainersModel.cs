@@ -32,6 +32,7 @@ namespace AzureStorage.Models
         private readonly ObservableCollectionEx<ResourceContainerModel> _blobContainers = new ObservableCollectionEx<ResourceContainerModel>();
         private DelegateCommand _delete;
         private AccountModel _account;
+        private bool _selectionMode;
         private bool _loading;
         private int _selected;
         private int _index;
@@ -332,6 +333,28 @@ namespace AzureStorage.Models
         }
 
         /// <summary>
+        /// Gets the selection mode.
+        /// </summary>
+        /// <returns>The current state for the selection mode.</returns>
+        public bool GetSelectionMode()
+        {
+            return _selectionMode;
+        }
+
+        /// <summary>
+        /// Determines if the UI will show the checkbox to allow selection.
+        /// </summary>
+        /// <param name="selectionMode">True if the checkbox should be shown.</param>
+        public void SetSelectionMode(bool selectionMode)
+        {
+            _selectionMode = selectionMode;
+
+            foreach (var resource in _blobContainers) resource.SelectionMode = _selectionMode;
+            foreach (var resource in _tables) resource.SelectionMode = _selectionMode;
+            foreach (var resource in _queues) resource.SelectionMode = _selectionMode;
+        }
+
+        /// <summary>
         /// Clears all selected items.
         /// </summary>
         public void ClearSelections()
@@ -453,12 +476,44 @@ namespace AzureStorage.Models
         }
 
         /// <summary>
+        /// Returns the current account
+        /// </summary>
+        public AccountModel Account
+        {
+            get { return _account; }
+        }
+
+        /// <summary>
         /// The currently active resource (0 = blobs, 1 = queues, 2 = tables)
         /// </summary>
         public int ResourceIndex
         {
             get { return _index; }
             set { _index = value; }
+        }
+
+        /// <summary>
+        /// Returns the current resource type being managed.
+        /// </summary>
+        public ContainerType CurrentType
+        {
+            get
+            {
+                switch (_index)
+                {
+                    case 0:
+                        return ContainerType.BlobContainer;
+
+                    case 1:
+                        return ContainerType.Queue;
+
+                    case 2:
+                        return ContainerType.Table;
+
+                    default:
+                        return ContainerType.BlobContainer;
+                }
+            }
         }
 
         #endregion

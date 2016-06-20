@@ -4,6 +4,8 @@
 
 using System;
 using Template10.Mvvm;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace AzureStorage.Models
 {
@@ -36,10 +38,38 @@ namespace AzureStorage.Models
         #region Private fields
 
         private readonly ResourceContainersModel _parent;
+        private DelegateCommand _add;
         private ContainerType _type;
+        private bool _selectionMode;
         private bool _selected;
         private string _name;
         private string _uri;
+
+        #endregion
+
+        #region Private methods
+
+        /// <summary>
+        /// Event handler to notify when added.
+        /// </summary>
+        public event EventHandler OnAdd;
+
+        /// <summary>
+        /// Determines if the resource  can be added.
+        /// </summary>
+        /// <returns></returns>
+        private bool CanAddResource()
+        {
+            return !string.IsNullOrEmpty(_name);
+        }
+
+        /// <summary>
+        /// Action called when adding a new resource
+        /// </summary>
+        private void AddResource()
+        {
+            OnAdd?.Invoke(this, EventArgs.Empty);
+        }
 
         #endregion
 
@@ -48,12 +78,21 @@ namespace AzureStorage.Models
         /// <summary>
         /// Constructor.
         /// </summary>
+        public ResourceContainerModel()
+        {
+            _add = new DelegateCommand(new Action(AddResource), CanAddResource);
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         /// <param name="parent">The owner of the item</param>
-        public ResourceContainerModel(ResourceContainersModel parent)
+        public ResourceContainerModel(ResourceContainersModel parent) : this()
         {
             if (parent == null) throw new ArgumentNullException("parent");
 
             _parent = parent;
+            _selectionMode = parent.GetSelectionMode();
         }
 
         /// <summary>
@@ -71,6 +110,14 @@ namespace AzureStorage.Models
         #region Public properties
 
         /// <summary>
+        /// The comamnd action for adding a resource.
+        /// </summary>
+        public DelegateCommand Add
+        {
+            get { return _add; }
+        }
+
+        /// <summary>
         /// The name of the resource.
         /// </summary>
         public string Name
@@ -80,6 +127,7 @@ namespace AzureStorage.Models
             {
                 _name = value;
 
+                _add.RaiseCanExecuteChanged();
                 base.RaisePropertyChanged();
             }
         }
@@ -94,7 +142,29 @@ namespace AzureStorage.Models
             {
                 _type = value;
 
+                RaisePropertyChanged("NewDescription");
                 base.RaisePropertyChanged();
+            }
+        }
+
+        /// <summary>
+        /// Returns the description for adding new resource.
+        /// </summary>
+        public string NewDescription
+        {
+            get
+            {
+                switch (_type)
+                {
+                    case ContainerType.BlobContainer:
+                        return "Blob Container Name";
+
+                    case ContainerType.Queue:
+                        return "Queue Name";
+
+                    default:
+                        return "Table Name";
+                }
             }
         }
 
@@ -123,10 +193,35 @@ namespace AzureStorage.Models
                 if (_selected != value)
                 {
                     _selected = value;
-                    _parent.Selected += (_selected ? 1 : -1);
+                    if (_parent != null) _parent.Selected += (_selected ? 1 : -1);
 
                     base.RaisePropertyChanged();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Determines if the user interface will allow the item to be selected.
+        /// </summary>
+        public bool SelectionMode
+        {
+            get { return _selectionMode; }
+            set
+            {
+                _selectionMode = value;
+
+                base.RaisePropertyChanged();
+            }
+        }
+        
+        /// <summary>
+        /// Image source for container.
+        /// </summary>
+        public ImageSource ResourceImage
+        {
+            get
+            {
+                return new BitmapImage(new Uri(string.Format("ms-appx:///Assets/{0}.png", _type.ToString().ToLower())));
             }
         }
 

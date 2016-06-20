@@ -96,8 +96,11 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\AccountControl.xaml.cs">
-      <DependentUpon>AccountControl.xaml</DependentUpon>
+    <Compile Include="Controls\AddAccountControl.xaml.cs">
+      <DependentUpon>AddAccountControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\AddResourceControl.xaml.cs">
+      <DependentUpon>AddResourceControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\StringToUriConverter.cs" />
@@ -142,6 +145,9 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\blobcontainer.png" />
+    <Content Include="Assets\queue.png" />
+    <Content Include="Assets\table.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -158,7 +164,11 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Controls\AccountControl.xaml">
+    <Page Include="Controls\AddAccountControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\AddResourceControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

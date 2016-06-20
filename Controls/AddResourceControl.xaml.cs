@@ -11,14 +11,13 @@ using Windows.UI.Xaml.Controls;
 namespace AzureStorage.Controls
 {
     /// <summary>
-    /// The dialog for adding a new storage account.
+    /// User control for adding a new resource.
     /// </summary>
-    public sealed partial class AccountControl : UserControl
+    public sealed partial class AddResourceControl : UserControl
     {
         #region Private properties
 
-        private readonly AccountModel _account = new AccountModel();
-        private DelegateCommand _add;
+        private readonly ResourceContainerModel _resource = new ResourceContainerModel();
 
         #endregion
 
@@ -31,8 +30,7 @@ namespace AzureStorage.Controls
         /// <param name="e">The routed event arguments.</param>
         private void OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            if (sender.Equals(nameText)) _account.AccountName = nameText.Text;
-            if (sender.Equals(keyText)) _account.AccountKey = keyText.Text;
+            if (sender.Equals(nameText)) _resource.Name = nameText.Text;
         }
 
         /// <summary>
@@ -55,6 +53,16 @@ namespace AzureStorage.Controls
             OnCancel?.Invoke(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Event that is fired when the control is loaded.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e"></param>
+        private void OnControlLoaded(object sender, RoutedEventArgs e)
+        {
+            nameText.Focus(FocusState.Programmatic);
+        }
+
         #endregion
 
         #region Constructor
@@ -62,11 +70,12 @@ namespace AzureStorage.Controls
         /// <summary>
         /// Constructor.
         /// </summary>
-        public AccountControl()
+        public AddResourceControl()
         {
             InitializeComponent();
 
-            _account.OnAdd += AddClicked;
+            Loaded += OnControlLoaded;
+            _resource.OnAdd += AddClicked;
         }
 
         #endregion
@@ -84,19 +93,11 @@ namespace AzureStorage.Controls
         public event EventHandler OnAdd;
 
         /// <summary>
-        /// The delegate command for adding an account.
-        /// </summary>
-        public DelegateCommand Add
-        {
-            get { return _add; }
-        }
-
-        /// <summary>
         /// The account model.
         /// </summary>
-        public AccountModel Account
+        public ResourceContainerModel Resource
         {
-            get { return _account; }
+            get { return _resource; }
         }
 
         #endregion
