@@ -88,7 +88,6 @@ namespace AzureStorage.ViewModels
 
             Task.Run(async () =>
             {
-
                 var account = new CloudStorageAccount(new StorageCredentials(storageAccount.AccountName, storageAccount.AccountKey), storageAccount.SuffixEndpoint, true);
 
                 switch (_addResource.Resource.ResourceType)
@@ -165,7 +164,8 @@ namespace AzureStorage.ViewModels
                         var resource = new ResourceContainerModel(_resources, _resources.CurrentType);
 
                         resource.Name = _addResource.Resource.Name;
-                        
+                        resource.Uri = _addResource.Resource.Uri;
+
                         switch (resource.ResourceType)
                         {
                             case ContainerType.BlobContainer:
@@ -207,10 +207,11 @@ namespace AzureStorage.ViewModels
         /// <summary>
         /// Loads the resources from the azure storage account.
         /// </summary>
-        private void Load()
+        private async void Load()
         {
             RaisePropertyChanged("Name");
-            Dispatcher.DispatchAsync(async () => { await _resources.Load(Dispatcher); });
+
+            await _resources.Load(Dispatcher);
         }
 
         #endregion
@@ -229,7 +230,6 @@ namespace AzureStorage.ViewModels
             _addResource.Margin = new Thickness(20, 0, 20, 0);
             _addResource.OnAdd += OnAddResource;
             _addResource.OnCancel += OnCancelResource;
-
             _index = 0;
         }
 
@@ -264,12 +264,14 @@ namespace AzureStorage.ViewModels
         /// <returns>The task to wait on.</returns>
         public override async Task OnNavigatedFromAsync(IDictionary<string, object> suspensionState, bool suspending)
         {
-            if (suspending)
+            try
             {
-             
+                if (suspending) { }
             }
-
-            await Task.CompletedTask;
+            finally
+            {
+                await Task.CompletedTask;
+            }
         }
 
         /// <summary>
@@ -279,9 +281,14 @@ namespace AzureStorage.ViewModels
         /// <returns></returns>
         public override async Task OnNavigatingFromAsync(NavigatingEventArgs args)
         {
-            args.Cancel = false;
-
-            await Task.CompletedTask;
+            try
+            {
+                args.Cancel = false;
+            }
+            finally
+            {
+                await Task.CompletedTask;
+            }
         }
 
         /// <summary>

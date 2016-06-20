@@ -244,11 +244,11 @@ namespace AzureStorage.Models
                 await DeleteQueues(queueClient);
                 await DeleteTables(tableClient);
             }
-            catch
+            catch (Exception exception)
             {
                 Window.Current.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                 {
-                    await Dialogs.Show(_account.AccountName, "Error removing resources from the storage account.");
+                    await Dialogs.ShowException(_account.AccountName, "Failed to remove resources from the storage account.", exception, false);
                 });
             }
             finally
@@ -390,11 +390,11 @@ namespace AzureStorage.Models
                 await LoadQueues(queueClient);
                 await LoadTables(tableClient);
             }
-            catch 
+            catch (Exception exception)
             {
                 dispatcher.DispatchAsync(async () =>
                 {
-                    await Dialogs.Show(_account.AccountName, "Error loading resources from the storage account.");
+                    await Dialogs.ShowException(_account.AccountName, "Error loading resources from the storage account.", exception, false);
                 });
             }
             finally
