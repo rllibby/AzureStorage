@@ -16,7 +16,7 @@
 
         <!-- Add resource form -->
         <StackPanel x:Name="editPanel" Grid.Row="1" Margin="20, 16" DataContext="{Binding ElementName=ThisPage}">
-            <TextBox x:Name="nameText" Header="{Binding Resource.NewDescription, Mode=OneWay}" Text="{Binding Resource.Name, Mode=TwoWay}" TextChanged="OnTextChanged" />
+            <TextBox x:Name="nameText" Header="{Binding Resource.NewDescription, Mode=OneWay}" IsTextPredictionEnabled="False" IsSpellCheckEnabled="False" Text="{Binding Resource.Name, Mode=TwoWay}" TextChanged="OnTextChanged" KeyUp="OnKeyUp"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button x:Name="addButton" Margin="0,20,8,0" Command="{Binding Resource.Add}" HorizontalAlignment="Left">Add</Button>
                 <Button x:Name="cancelButton" Margin="0,20,0,0" Click="CloseClicked" HorizontalAlignment="Left">Cancel</Button>

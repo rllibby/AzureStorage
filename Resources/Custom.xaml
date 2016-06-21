@@ -23,14 +23,14 @@
         <Grid x:Name="resourceItem" Margin="2" Padding="8,4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="48" />
+                <ColumnDefinition Width="56" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <CheckBox VerticalAlignment="Center" Width="30" MaxWidth="30" Grid.Column="0" Visibility="{Binding SelectionMode, Converter={StaticResource BooleanToVisibility}, Mode=OneWay}" IsChecked="{Binding Selected, Mode=TwoWay}" Margin="0" HorizontalAlignment="Center" HorizontalContentAlignment="Left" MinWidth="30" MinHeight="30" MaxHeight="30" />
-            <Image Grid.Column="1" Source="{Binding ResourceImage}" Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="32" MinHeight="32" MaxWidth="32" MaxHeight="32" />
+            <Image Grid.Column="1" Source="{Binding ResourceImage}" Width="48" Height="48" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="32" MinHeight="32" MaxWidth="32" MaxHeight="32" />
             <StackPanel Grid.Column="2">
-                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left"  />
-                <TextBlock Text="{Binding Uri}" Foreground="{ThemeResource SystemControlHighlightAltListAccentLowBrush}"  VerticalAlignment="Center" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" />
+                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" Style="{StaticResource SubtitleTextBlockStyle}" />
+                <TextBlock Text="{Binding Uri}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" Style="{StaticResource BodyTextBlockStyle}" Foreground="{ThemeResource TextBoxDisabledForegroundThemeBrush}" />
             </StackPanel>
         </Grid>
     </DataTemplate>

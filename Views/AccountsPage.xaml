@@ -61,10 +61,10 @@
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0" Padding="10,20">
-                <TextBlock Text="Storage Accounts" />
+                <TextBlock Text="Storage Accounts" Style="{StaticResource SubtitleTextBlockStyle}"/>
                 <ComboBox x:Name="accounts" Margin="0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
-                          ItemsSource="{x:Bind ViewModel.Accounts.Accounts}" SelectedIndex="{x:Bind ViewModel.Accounts.SelectedIndex, Mode=TwoWay}"/>
-                <HyperlinkButton Margin="0,10" Content="Azure Portal" NavigateUri="https://portal.azure.com"/>
+                          ItemsSource="{x:Bind ViewModel.Accounts.Accounts}" SelectedIndex="{x:Bind ViewModel.Accounts.SelectedIndex, Mode=TwoWay}" FontSize="20"/>
+                <HyperlinkButton Margin="0,10" Content="Azure Portal" NavigateUri="https://portal.azure.com" FontSize="20" />
             </StackPanel>
             <CommandBar x:Name="bottomBar" Grid.Row="1">
                 <AppBarButton x:Name="add" Icon="Add" Label="Add" Command="{x:Bind ViewModel.Add}" />

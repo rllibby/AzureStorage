@@ -2,27 +2,28 @@
  *  Copyright © 2016, Russell Libby 
  */
 
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Controls;
 
 namespace AzureStorage.Views
 {
     /// <summary>
-    /// Main page.
+    /// Table page.
     /// </summary>
-    public sealed partial class MainPage : Page
+    public sealed partial class TablePage : Page
     {
         #region Constructor
 
         /// <summary>
-        /// Consructor.
+        /// Constructor.
         /// </summary>
-        public MainPage()
+        public TablePage()
         {
             InitializeComponent();
-            NavigationCacheMode = NavigationCacheMode.Enabled;
+            NavigationCacheMode = NavigationCacheMode.Disabled;
         }
 
         #endregion
     }
 }
+

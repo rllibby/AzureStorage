@@ -10,27 +10,6 @@ using Windows.UI.Xaml.Media.Imaging;
 namespace AzureStorage.Models
 {
     /// <summary>
-    /// Enumeration for the container types.
-    /// </summary>
-    public enum ContainerType
-    {
-        /// <summary>
-        /// Azure table.
-        /// </summary>
-        Table,
-
-        /// <summary>
-        /// Azure queue.
-        /// </summary>
-        Queue,
-
-        /// <summary>
-        /// Azure blob container.
-        /// </summary>
-        BlobContainer
-    }
-
-    /// <summary>
     /// Container class for Azure table, queue, and blob container.
     /// </summary>
     public class ResourceContainerModel : BindableBase

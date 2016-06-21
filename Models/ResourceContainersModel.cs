@@ -253,7 +253,7 @@ namespace AzureStorage.Models
             }
             finally
             {
-                ClearSelections();
+                SelectionMode = false;
                 Loading = false;
             }
         }
@@ -457,6 +457,41 @@ namespace AzureStorage.Models
 
                     base.RaisePropertyChanged();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Determines if the add button is visible.
+        /// </summary>
+        public bool AddVisible
+        {
+            get { return !_selectionMode; }
+        }
+
+        /// <summary>
+        /// Determines if the delete button is visible.
+        /// </summary>
+        public bool DeleteVisible
+        {
+            get { return _selectionMode; }
+        }
+
+        /// <summary>
+        /// Determines if resources can be selected in the user interface.
+        /// </summary>
+        public bool? SelectionMode
+        {
+            get { return _selectionMode; }
+            set
+            {
+                _selectionMode = (value == null) ? false : value.Value;
+
+                SetSelectionMode(_selectionMode);
+                ClearSelections();
+
+                RaisePropertyChanged("AddVisible");
+                RaisePropertyChanged("DeleteVisible");
+                base.RaisePropertyChanged();
             }
         }
 

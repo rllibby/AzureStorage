@@ -16,6 +16,7 @@ using Template10.Mvvm;
 using Template10.Services.NavigationService;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 namespace AzureStorage.ViewModels
@@ -31,7 +32,6 @@ namespace AzureStorage.ViewModels
         private ResourceContainersModel _resources;
         private DelegateCommand _refresh;
         private DelegateCommand _add;
-        private bool _selectionMode;
         private int _index;
 
         #endregion
@@ -305,6 +305,36 @@ namespace AzureStorage.ViewModels
             if (pivot != null) _index = _resources.ResourceIndex = pivot.SelectedIndex;  
         }
 
+        /// <summary>
+        /// Event that is triggered when the list item is clicked.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The event arguments.</param>
+        public void ListItemClicked(object sender, ItemClickEventArgs e)
+        {
+            if (_resources.SelectionMode.HasValue && _resources.SelectionMode.Value) return;
+            if (_resources.Account == null) return;
+
+            var resource = (e.ClickedItem as ResourceContainerModel);
+
+            if (resource == null) return;
+
+            var param = new AccountResourceModel(_resources.Account, resource.Name, resource.ResourceType);
+                
+            switch (param.ResourceType)
+            {
+                case ContainerType.BlobContainer:
+                    break;
+
+                case ContainerType.Queue:
+                    break;
+
+                case ContainerType.Table:
+                    NavigationService.Navigate(typeof(Views.TablePage), param, new SuppressNavigationTransitionInfo());
+                    break;
+            }
+        }
+
         #endregion
 
         #region Public properties
@@ -343,22 +373,6 @@ namespace AzureStorage.ViewModels
                 var account = AccountsModel.Instance.Current;
 
                 return (account == null) ? "Resources" : string.Format("Account - {0}", account.AccountName);
-            }
-        }
-
-        /// <summary>
-        /// Determines if resources can be selected in the user interface.
-        /// </summary>
-        public bool? SelectionMode
-        {
-            get { return _selectionMode; }
-            set
-            {
-                _selectionMode = (value == null) ? false : value.Value;
-                _resources.SetSelectionMode(_selectionMode);
-
-
-                base.RaisePropertyChanged();
             }
         }
 

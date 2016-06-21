@@ -16,8 +16,8 @@
 
         <!-- Add account form -->
         <StackPanel x:Name="editPanel" Grid.Row="1" Margin="20, 16" DataContext="{Binding ElementName=ThisPage}">
-            <TextBox x:Name="nameText" Header="Account Name" Text="{Binding Account.AccountName, Mode=TwoWay}" TextChanged="OnTextChanged" />
-            <TextBox x:Name="keyText" Header="Account Key" Text="{Binding Account.AccountKey, Mode=TwoWay}" TextChanged="OnTextChanged"/>
+            <TextBox x:Name="nameText" Header="Account Name" IsTextPredictionEnabled="False" IsSpellCheckEnabled="False" Text="{Binding Account.AccountName, Mode=TwoWay}" TextChanged="OnTextChanged" KeyUp="OnKeyUp"/>
+            <TextBox x:Name="keyText" Header="Account Key"  IsTextPredictionEnabled="False" IsSpellCheckEnabled="False" Text="{Binding Account.AccountKey, Mode=TwoWay}" TextChanged="OnTextChanged" KeyUp="OnKeyUp"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button x:Name="addButton" Margin="0,20,8,0" Command="{Binding Account.Add}" HorizontalAlignment="Left">Add</Button>
                 <Button x:Name="cancelButton" Margin="0,20,0,0" Click="CloseClicked" HorizontalAlignment="Left">Cancel</Button>

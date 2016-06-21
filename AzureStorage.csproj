@@ -108,7 +108,9 @@
     <Compile Include="Helpers\ObjectHelper.cs" />
     <Compile Include="Helpers\ObservableCollectionEx.cs" />
     <Compile Include="Models\AccountModel.cs" />
+    <Compile Include="Models\AccountResourceModel.cs" />
     <Compile Include="Models\AccountsModel.cs" />
+    <Compile Include="Models\ContainerType.cs" />
     <Compile Include="Models\ResourceContainerModel.cs" />
     <Compile Include="Models\ResourceContainersModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -123,8 +125,8 @@
     <Compile Include="Views\Busy.xaml.cs">
       <DependentUpon>Busy.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\DetailPage.xaml.cs">
-      <DependentUpon>DetailPage.xaml</DependentUpon>
+    <Compile Include="Views\TablePage.xaml.cs">
+      <DependentUpon>TablePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -185,7 +187,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\DetailPage.xaml">
+    <Page Include="Views\TablePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
