@@ -3,8 +3,6 @@
  */
 
 using AzureStorage.Helpers;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Queue;
 using Microsoft.WindowsAzure.Storage.Table;
@@ -30,6 +28,7 @@ namespace AzureStorage.Models
         private readonly ObservableCollectionEx<ResourceContainerModel> _tables = new ObservableCollectionEx<ResourceContainerModel>();
         private readonly ObservableCollectionEx<ResourceContainerModel> _queues = new ObservableCollectionEx<ResourceContainerModel>();
         private readonly ObservableCollectionEx<ResourceContainerModel> _blobContainers = new ObservableCollectionEx<ResourceContainerModel>();
+        private ObservableCollectionEx<ResourceContainerModel>[] _containers;
         private DelegateCommand _delete;
         private AccountModel _account;
         private bool _selectionMode;
@@ -54,7 +53,9 @@ namespace AzureStorage.Models
 
             foreach (var blob in selected.ToList())
             {
-                _blobContainers.Remove(blob); 
+                _blobContainers.Remove(blob);
+
+                RecentModel.Instance.Remove(_account, blob);
 
                 try
                 {
@@ -82,7 +83,9 @@ namespace AzureStorage.Models
              
             foreach (var queue in selected.ToList())
             {
-                _queues.Remove(queue); 
+                _queues.Remove(queue);
+
+                RecentModel.Instance.Remove(_account, queue);
 
                 try
                 {
@@ -110,7 +113,9 @@ namespace AzureStorage.Models
 
             foreach (var table in selected.ToList())
             {
-                _tables.Remove(table); 
+                _tables.Remove(table);
+
+                RecentModel.Instance.Remove(_account, table);
 
                 try
                 {
@@ -132,8 +137,6 @@ namespace AzureStorage.Models
         /// <returns>The async task to wait on.</returns>
         private async Task LoadBlobContainers(CloudBlobClient client)
         {
-            _blobContainers.Clear();
-
             if (client == null) return;
 
             BlobContinuationToken token = null;
@@ -165,8 +168,6 @@ namespace AzureStorage.Models
         /// <returns>The async task to wait on.</returns>
         private async Task LoadQueues(CloudQueueClient client)
         {
-            _queues.Clear();
-
             if (client == null) return;
 
             QueueContinuationToken token = null;
@@ -198,8 +199,6 @@ namespace AzureStorage.Models
         /// <returns>The async task to wait on.</returns>
         private async Task LoadTables(CloudTableClient client)
         {
-            _tables.Clear();
-
             if (client == null) return;
 
             TableContinuationToken token = null;
@@ -235,7 +234,7 @@ namespace AzureStorage.Models
             {
                 if (_account == null) return;
 
-                var storageAccount = new CloudStorageAccount(new StorageCredentials(_account.AccountName, _account.AccountKey), _account.SuffixEndpoint, true);
+                var storageAccount = _account.GetStorageAccount();
                 var tableClient = storageAccount.CreateCloudTableClient();
                 var blobClient = storageAccount.CreateCloudBlobClient();
                 var queueClient = storageAccount.CreateCloudQueueClient();
@@ -309,6 +308,7 @@ namespace AzureStorage.Models
         public ResourceContainersModel()
         {
             _delete = new DelegateCommand(new Action(DeleteSelected), CanDeleteSelected);
+            _containers = new[] { _blobContainers, _queues, _tables };
         }
 
         #endregion
@@ -322,9 +322,7 @@ namespace AzureStorage.Models
         {
             try
             {
-                _blobContainers.BeginUpdate();
-                _tables.BeginUpdate();
-                _queues.BeginUpdate();
+                foreach (var container in _containers) container.Clear();
             }
             finally
             {
@@ -342,6 +340,26 @@ namespace AzureStorage.Models
         }
 
         /// <summary>
+        /// Removes the specified item from the collection.
+        /// </summary>
+        /// <param name="resource">The resource to remove.</param>
+        public void Remove(ResourceContainerModel resource)
+        {
+            if (resource == null) return;
+
+            foreach (var container in _containers)
+            {
+                if (container.Contains(resource))
+                {
+                    resource.Selected = false;
+                    container.Remove(resource);
+
+                    return;
+                }
+            }
+        }
+
+        /// <summary>
         /// Determines if the UI will show the checkbox to allow selection.
         /// </summary>
         /// <param name="selectionMode">True if the checkbox should be shown.</param>
@@ -349,9 +367,10 @@ namespace AzureStorage.Models
         {
             _selectionMode = selectionMode;
 
-            foreach (var resource in _blobContainers) resource.SelectionMode = _selectionMode;
-            foreach (var resource in _tables) resource.SelectionMode = _selectionMode;
-            foreach (var resource in _queues) resource.SelectionMode = _selectionMode;
+            foreach (var container in _containers)
+            {
+                foreach (var resource in container) resource.SelectionMode = _selectionMode;
+            }
         }
 
         /// <summary>
@@ -359,9 +378,10 @@ namespace AzureStorage.Models
         /// </summary>
         public void ClearSelections()
         {
-            foreach (var resource in _blobContainers) resource.Selected = false;
-            foreach (var resource in _tables) resource.Selected = false;
-            foreach (var resource in _queues) resource.Selected = false;
+            foreach (var container in _containers)
+            {
+                foreach (var resource in container) resource.Selected = false;
+            }
         }
 
         /// <summary>
@@ -381,7 +401,7 @@ namespace AzureStorage.Models
 
                 if (_account == null) return;
 
-                var storageAccount = new CloudStorageAccount(new StorageCredentials(_account.AccountName, _account.AccountKey), _account.SuffixEndpoint, true);
+                var storageAccount = _account.GetStorageAccount();
                 var tableClient = storageAccount.CreateCloudTableClient();
                 var blobClient = storageAccount.CreateCloudBlobClient();
                 var queueClient = storageAccount.CreateCloudQueueClient();
@@ -399,10 +419,6 @@ namespace AzureStorage.Models
             }
             finally
             {
-                _blobContainers.EndUpdate(dispatcher);
-                _tables.EndUpdate(dispatcher);
-                _queues.EndUpdate(dispatcher);
-
                 Loading = false;
             }
         }

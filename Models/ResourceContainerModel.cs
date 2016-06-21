@@ -196,11 +196,11 @@ namespace AzureStorage.Models
         /// <summary>
         /// Image source for container.
         /// </summary>
-        public ImageSource ResourceImage
+        public string ResourceImage
         {
             get
             {
-                return new BitmapImage(new Uri(string.Format("ms-appx:///Assets/{0}.png", _type.ToString().ToLower())));
+                return _type.ToString().ToLower();
             }
         }
 

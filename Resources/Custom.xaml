@@ -8,7 +8,8 @@
     <x:Double x:Key="WideMinWidth">1200</x:Double>
 
     <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
-    <converters:StringToUriConverter x:Key="StringToUri" />
+    <converters:ContainerTypeToStringConverter x:Key="ContainerTypeToString" />
+    <converters:StringToImageConverter x:Key="StringToImage" />
 
     <Color x:Key="CustomColor">#003C6C</Color>
     <Color x:Key="ContrastColor">White</Color>
@@ -19,6 +20,25 @@
         <Setter Property="Padding" Value="0,0" />
     </Style>
 
+    <DataTemplate x:Key="RecentItemTemplate">
+        <Grid x:Name="recentItem" Margin="2" Padding="8,4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="56" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Image Grid.Column="0" Source="{Binding ResourceImage, Converter={StaticResource StringToImage}, Mode=OneWay}" Width="48" Height="48" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="32" MinHeight="32" MaxWidth="32" MaxHeight="32" />
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="{Binding ResourceName}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" Style="{StaticResource SubtitleTextBlockStyle}" />
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{Binding ResourceType, Converter={StaticResource ContainerTypeToString}}" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Foreground="{ThemeResource TextBoxDisabledForegroundThemeBrush}" />
+                    <TextBlock Text=", located in (" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Foreground="{ThemeResource TextBoxDisabledForegroundThemeBrush}" />
+                    <TextBlock Text="{Binding Account}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" Style="{StaticResource BodyTextBlockStyle}" Foreground="{ThemeResource TextBoxDisabledForegroundThemeBrush}" />
+                    <TextBlock Text=")" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Foreground="{ThemeResource TextBoxDisabledForegroundThemeBrush}" />
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+
     <DataTemplate x:Key="ResourcesItemTemplate">
         <Grid x:Name="resourceItem" Margin="2" Padding="8,4">
             <Grid.ColumnDefinitions>
@@ -27,7 +47,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <CheckBox VerticalAlignment="Center" Width="30" MaxWidth="30" Grid.Column="0" Visibility="{Binding SelectionMode, Converter={StaticResource BooleanToVisibility}, Mode=OneWay}" IsChecked="{Binding Selected, Mode=TwoWay}" Margin="0" HorizontalAlignment="Center" HorizontalContentAlignment="Left" MinWidth="30" MinHeight="30" MaxHeight="30" />
-            <Image Grid.Column="1" Source="{Binding ResourceImage}" Width="48" Height="48" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="32" MinHeight="32" MaxWidth="32" MaxHeight="32" />
+            <Image Grid.Column="1" Source="{Binding ResourceImage, Converter={StaticResource StringToImage}, Mode=OneWay}" Width="48" Height="48" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="32" MinHeight="32" MaxWidth="32" MaxHeight="32" />
             <StackPanel Grid.Column="2">
                 <TextBlock Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" Style="{StaticResource SubtitleTextBlockStyle}" />
                 <TextBlock Text="{Binding Uri}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" Style="{StaticResource BodyTextBlockStyle}" Foreground="{ThemeResource TextBoxDisabledForegroundThemeBrush}" />

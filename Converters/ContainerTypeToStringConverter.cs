@@ -2,18 +2,27 @@
  *  Copyright © 2016, Russell Libby 
  */
 
+using AzureStorage.Models;
 using System;
 using Windows.UI.Xaml.Data;
 
 namespace AzureStorage.Converters
 {
     /// <summary>
-    /// Value converter that translates the string to a URI.
+    /// Value converter that translates the ContainerType enum to a string.
     /// </summary>
-    public class StringToUriConverter : IValueConverter
+    public class ContainerTypeToStringConverter : IValueConverter
     {
+        #region Private consts
+
+        private const string BlobContainer = "azure blob container";
+        private const string Queue = "azure queue";
+        private const string Table = "azure table";
+
+        #endregion
+
         /// <summary>
-        /// Convert boolean value to Visibility type.
+        /// Convert container type to string type.
         /// </summary>
         /// <param name="value">The value to convert.</param>
         /// <param name="targetType">The target type (expecting string).</param>
@@ -22,7 +31,22 @@ namespace AzureStorage.Converters
         /// <returns>The visibility state.</returns>
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            return (string.IsNullOrEmpty(value.ToString()) ? null : new Uri(value.ToString()));
+            if (value is ContainerType)
+            {
+                switch ((ContainerType)value)
+                {
+                    case ContainerType.BlobContainer:
+                        return BlobContainer;
+
+                    case ContainerType.Queue:
+                        return Queue;
+
+                    case ContainerType.Table:
+                        return Table;
+                }
+            }
+
+            return string.Empty;
         }
 
         /// <summary>
@@ -35,7 +59,12 @@ namespace AzureStorage.Converters
         /// <returns>The visibility state.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            return (value is Uri) ? ((Uri)value).OriginalString : null;
+            var text = value.ToString();
+
+            if (text.Equals(BlobContainer)) return ContainerType.BlobContainer;
+            if (text.Equals(Queue)) return ContainerType.Queue;
+
+            return ContainerType.Table;
         }
     }
 }

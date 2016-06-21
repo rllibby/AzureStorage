@@ -76,7 +76,7 @@ namespace AzureStorage.ViewModels
 
             Task.Run(async () =>
             {
-                var account = new CloudStorageAccount(new StorageCredentials(_addAccount.Account.AccountName, _addAccount.Account.AccountKey), _addAccount.Account.SuffixEndpoint, true);
+                var account = _addAccount.Account.GetStorageAccount();
                 var tableClient = account.CreateCloudTableClient();
                 var tables = await tableClient.ListTablesSegmentedAsync(null);
 

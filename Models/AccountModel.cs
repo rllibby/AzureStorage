@@ -2,6 +2,8 @@
  *  Copyright © 2016, Russell Libby 
  */
 
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
 using Newtonsoft.Json;
 using System;
 using Template10.Mvvm;
@@ -72,6 +74,15 @@ namespace AzureStorage.Models
         #endregion
 
         #region Public methods
+
+        /// <summary>
+        /// Returns an instance of CloudStorageAccount based on the current state.
+        /// </summary>
+        /// <returns>The cloud storage account on success.</returns>
+        public CloudStorageAccount GetStorageAccount()
+        {
+            return new CloudStorageAccount(new StorageCredentials(_name, _key), Endpoint, true);
+        }
 
         /// <summary>
         /// Clears the account.

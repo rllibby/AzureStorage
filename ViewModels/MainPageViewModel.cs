@@ -3,10 +3,9 @@
  */
 
 using AzureStorage.Controls;
+using AzureStorage.Helpers;
 using AzureStorage.Models;
 using AzureStorage.Views;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Auth;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -88,7 +87,7 @@ namespace AzureStorage.ViewModels
 
             Task.Run(async () =>
             {
-                var account = new CloudStorageAccount(new StorageCredentials(storageAccount.AccountName, storageAccount.AccountKey), storageAccount.SuffixEndpoint, true);
+                var account = storageAccount.GetStorageAccount();
 
                 switch (_addResource.Resource.ResourceType)
                 {
@@ -310,7 +309,7 @@ namespace AzureStorage.ViewModels
         /// </summary>
         /// <param name="sender">The sender of the event.</param>
         /// <param name="e">The event arguments.</param>
-        public void ListItemClicked(object sender, ItemClickEventArgs e)
+        public async void ListItemClicked(object sender, ItemClickEventArgs e)
         {
             if (_resources.SelectionMode.HasValue && _resources.SelectionMode.Value) return;
             if (_resources.Account == null) return;
@@ -320,7 +319,30 @@ namespace AzureStorage.ViewModels
             if (resource == null) return;
 
             var param = new AccountResourceModel(_resources.Account, resource.Name, resource.ResourceType);
-                
+
+            _resources.Loading = true;
+
+            try
+            {
+                var exists = await param.Exists();
+
+                if (exists == null) return;
+                if (!exists.Value)
+                {
+                    await Dialogs.Show(resource.Name, "The specified resource no longer exists.");
+
+                    _resources.Remove(resource);
+
+                    return;
+                }
+            }
+            finally
+            {
+                _resources.Loading = false;
+            }
+
+            RecentModel.Instance.Add(param);
+               
             switch (param.ResourceType)
             {
                 case ContainerType.BlobContainer:

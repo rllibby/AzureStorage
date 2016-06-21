@@ -83,8 +83,10 @@ namespace AzureStorage.Models
             if (!result) return;
 
             try
-                {
+            {
                 _accounts.RemoveAt(index);
+
+                RecentModel.Instance.Remove(account);
 
                 while (index >= _accounts.Count) index--;
 
