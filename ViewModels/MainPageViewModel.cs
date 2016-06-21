@@ -277,7 +277,7 @@ namespace AzureStorage.ViewModels
         /// View model is being navigated away from.
         /// </summary>
         /// <param name="args">The navigation event arguments.</param>
-        /// <returns></returns>
+        /// <returns>The async task to wait on.</returns>
         public override async Task OnNavigatingFromAsync(NavigatingEventArgs args)
         {
             try

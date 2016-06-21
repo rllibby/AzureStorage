@@ -7,12 +7,13 @@
       xmlns:controls="using:Template10.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="using:AzureStorage.Views"
+      xmlns:sf="using:Syncfusion.UI.Xaml.Grid"  
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:vm="using:AzureStorage.ViewModels" x:Name="ThisPage"
       mc:Ignorable="d">
 
     <Page.DataContext>
-        <vm:DetailPageViewModel x:Name="ViewModel" />
+        <vm:TablePageViewModel x:Name="ViewModel" />
     </Page.DataContext>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -21,12 +22,12 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-        <controls:PageHeader x:Name="pageHeader" Frame="{x:Bind Frame}"
-                             Grid.Row="0" Text="Table - testing"/>
+        <controls:PageHeader x:Name="pageHeader" Frame="{x:Bind Frame}" Grid.Row="0" Text="{x:Bind ViewModel.Name}"/>
 
-        <ScrollViewer Padding="0,0,0,0" Grid.Row="1" VerticalScrollBarVisibility="Auto">
-
-        </ScrollViewer>
+        <sf:SfDataGrid Grid.Row="1" BorderThickness="0" AllowGrouping="False" DataFetchSize="100" NavigationMode="Row" IsDynamicItemsSource="True"
+                       ItemsSource="{Binding TableSource}" FontSize="14" RowHeight="30">
+            
+        </sf:SfDataGrid>
         <CommandBar x:Name="bottomBar" Grid.Row="2">
             <CommandBar.SecondaryCommands>
                 <AppBarButton x:Name="refresh" Icon="Refresh" Label="Refresh" />
@@ -34,7 +35,7 @@
             <AppBarButton Icon="Add" Label="Add" />
             <AppBarButton Icon="Delete" Label="Delete" />
         </CommandBar>
-        <ProgressRing Grid.Row="1" MinWidth="100" MinHeight="100" IsActive="False" />
+        <ProgressRing Grid.Row="1" MinWidth="100" MinHeight="100" IsActive="{x:Bind ViewModel.Loading}" />
     </Grid>
 </Page>
 
