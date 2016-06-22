@@ -116,7 +116,7 @@
     <Compile Include="Models\RecentModel.cs" />
     <Compile Include="Models\ResourceContainerModel.cs" />
     <Compile Include="Models\ResourceContainersModel.cs" />
-    <Compile Include="Models\TableViewSource.cs" />
+    <Compile Include="Models\TableDataSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\SettingsServices\SettingsService.cs" />
     <Compile Include="ViewModels\AccountsPageViewModel.cs" />
@@ -219,11 +219,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <SDKReference Include="Syncfusion 8.1 controls for Universal XAML, Version=14.1.0.41">
-      <Name>Syncfusion 8.1 controls for Universal XAML</Name>
-    </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

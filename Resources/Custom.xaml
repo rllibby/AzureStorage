@@ -26,7 +26,7 @@
                 <ColumnDefinition Width="56" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Image Grid.Column="0" Source="{Binding ResourceImage, Converter={StaticResource StringToImage}, Mode=OneWay}" Width="48" Height="48" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="32" MinHeight="32" MaxWidth="32" MaxHeight="32" />
+            <SymbolIcon Symbol="{Binding ResourceSymbol}" Grid.Column="0" Width="48" Height="48" />
             <StackPanel Grid.Column="1">
                 <TextBlock Text="{Binding ResourceName}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" Style="{StaticResource SubtitleTextBlockStyle}" />
                 <StackPanel Orientation="Horizontal">
@@ -47,11 +47,24 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <CheckBox VerticalAlignment="Center" Width="30" MaxWidth="30" Grid.Column="0" Visibility="{Binding SelectionMode, Converter={StaticResource BooleanToVisibility}, Mode=OneWay}" IsChecked="{Binding Selected, Mode=TwoWay}" Margin="0" HorizontalAlignment="Center" HorizontalContentAlignment="Left" MinWidth="30" MinHeight="30" MaxHeight="30" />
-            <Image Grid.Column="1" Source="{Binding ResourceImage, Converter={StaticResource StringToImage}, Mode=OneWay}" Width="48" Height="48" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="32" MinHeight="32" MaxWidth="32" MaxHeight="32" />
+            <SymbolIcon Symbol="{Binding ResourceSymbol}" Grid.Column="1" Width="48" Height="48" />
             <StackPanel Grid.Column="2">
                 <TextBlock Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" Style="{StaticResource SubtitleTextBlockStyle}" />
                 <TextBlock Text="{Binding Uri}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" Style="{StaticResource BodyTextBlockStyle}" Foreground="{ThemeResource TextBoxDisabledForegroundThemeBrush}" />
             </StackPanel>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DataRowItemTemplate">
+        <Grid x:Name="dataRow" Margin="0" Padding="10,0,10,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="100" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{Binding Path=PartitionKey}" Grid.Column="0" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" Style="{StaticResource BodyTextBlockStyle}" />
+            <TextBlock Text="{Binding Path=RowKey}" Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" Style="{StaticResource BodyTextBlockStyle}" />
+            <TextBlock Text="{Binding Path=Data}" Grid.Column="2" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" Style="{StaticResource BodyTextBlockStyle}" />
         </Grid>
     </DataTemplate>
 

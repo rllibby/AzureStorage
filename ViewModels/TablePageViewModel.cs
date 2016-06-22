@@ -3,6 +3,7 @@
  */
 
 using AzureStorage.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Template10.Mvvm;
@@ -19,8 +20,22 @@ namespace AzureStorage.ViewModels
         #region Private fields
 
         private AccountResourceModel _resourceModel;
-        private TableViewSource _tableSource;
+        private TableDataSource _dataSource;
         private bool _loading;
+
+        #endregion
+
+        #region Private methods
+
+        private void OnLoadStart(object sender, EventArgs args)
+        {
+            Loading = true;
+        }
+
+        private void OnLoadComplete(object sender, EventArgs args)
+        {
+            Loading = false;
+        }
 
         #endregion
 
@@ -52,18 +67,18 @@ namespace AzureStorage.ViewModels
                 {
                     Resource = (AccountResourceModel)parameter;
 
-                    _tableSource = new TableViewSource(Resource);
+                    _dataSource = new TableDataSource(Resource);
 
-                    Loading = true;
+                    _dataSource.OnLoadStart += OnLoadStart;
+                    _dataSource.OnLoadComplete += OnLoadComplete;
 
                     try
                     {
-                        await _tableSource.LoadTable();
+                        await _dataSource.LoadTable(100);
                     }
                     finally
                     {
-                        RaisePropertyChanged("TableSource");
-                        Loading = false;
+                        RaisePropertyChanged("DatSource");
                     }
                 }
             }
@@ -100,6 +115,9 @@ namespace AzureStorage.ViewModels
         {
             try
             {
+                DataSource.Clear();
+                DataSource = null;
+
                 args.Cancel = false;
             }
             finally
@@ -128,28 +146,14 @@ namespace AzureStorage.ViewModels
         }
 
         /// <summary>
-        /// The table view data source.
+        /// The table data source.
         /// </summary>
-        public TableViewSource TableSource
+        public TableDataSource DataSource
         {
-            get { return _tableSource; }
+            get { return _dataSource; }
             set
             {
-                _tableSource = value;
-
-                base.RaisePropertyChanged();
-            }
-        }
-
-        /// <summary>
-        /// True if loading, othwerwise false.
-        /// </summary>
-        public bool Loading
-        {
-            get { return _loading; }
-            set
-            {
-                _loading = value;
+                _dataSource = value;
 
                 base.RaisePropertyChanged();
             }
@@ -161,6 +165,20 @@ namespace AzureStorage.ViewModels
         public string Name
         {
             get { return (_resourceModel == null) ? "Table" : string.Format("Table - {0}", _resourceModel.ResourceName); }
+        }
+
+        /// <summary>
+        /// True if data is loading, otherwise false.
+        /// </summary>
+        public bool Loading
+        {
+            get { return _loading; }
+            set
+            {
+                _loading = value;
+
+                base.RaisePropertyChanged();
+            }
         }
 
         #endregion

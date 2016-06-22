@@ -4,6 +4,7 @@
 
 using System;
 using Template10.Mvvm;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -194,13 +195,23 @@ namespace AzureStorage.Models
         }
         
         /// <summary>
-        /// Image source for container.
+        /// Symbol source for container.
         /// </summary>
-        public string ResourceImage
+        public Symbol ResourceSymbol
         {
             get
             {
-                return _type.ToString().ToLower();
+                switch (_type)
+                {
+                    case ContainerType.BlobContainer:
+                        return Symbol.Page2;
+
+                    case ContainerType.Queue:
+                        return Symbol.Message;
+
+                    default:
+                        return Symbol.ViewAll;
+                }
             }
         }
 

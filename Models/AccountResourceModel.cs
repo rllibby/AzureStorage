@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Template10.Mvvm;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace AzureStorage.Models
 {
@@ -133,13 +134,23 @@ namespace AzureStorage.Models
         }
 
         /// <summary>
-        /// Image source for container.
+        /// Symbol source for container.
         /// </summary>
-        public string ResourceImage
+        public Symbol ResourceSymbol
         {
             get
             {
-                return _resourceType.ToString().ToLower();
+                switch (_resourceType)
+                {
+                    case ContainerType.BlobContainer:
+                        return Symbol.Page2;
+
+                    case ContainerType.Queue:
+                        return Symbol.Message;
+
+                    default:
+                        return Symbol.ViewAll;
+                }
             }
         }
 

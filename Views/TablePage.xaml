@@ -7,7 +7,6 @@
       xmlns:controls="using:Template10.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="using:AzureStorage.Views"
-      xmlns:sf="using:Syncfusion.UI.Xaml.Grid"  
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:vm="using:AzureStorage.ViewModels" x:Name="ThisPage"
       mc:Ignorable="d">
@@ -24,10 +23,12 @@
         </Grid.RowDefinitions>
         <controls:PageHeader x:Name="pageHeader" Frame="{x:Bind Frame}" Grid.Row="0" Text="{x:Bind ViewModel.Name}"/>
 
-        <sf:SfDataGrid Grid.Row="1" BorderThickness="0" AllowGrouping="False" DataFetchSize="100" NavigationMode="Row" IsDynamicItemsSource="True"
-                       ItemsSource="{Binding TableSource}" FontSize="14" RowHeight="30">
+        <ListView x:Name="listView" Grid.Row="1" ItemTemplate="{StaticResource DataRowItemTemplate}" 
+                  ItemContainerStyle="{StaticResource ListViewContainerStyle}"
+                  ItemsSource="{x:Bind ViewModel.DataSource}">
             
-        </sf:SfDataGrid>
+        </ListView>
+
         <CommandBar x:Name="bottomBar" Grid.Row="2">
             <CommandBar.SecondaryCommands>
                 <AppBarButton x:Name="refresh" Icon="Refresh" Label="Refresh" />
@@ -35,7 +36,7 @@
             <AppBarButton Icon="Add" Label="Add" />
             <AppBarButton Icon="Delete" Label="Delete" />
         </CommandBar>
-        <ProgressRing Grid.Row="1" MinWidth="100" MinHeight="100" IsActive="{x:Bind ViewModel.Loading}" />
+        <ProgressRing Grid.Row="1" MinWidth="100" MinHeight="100" IsActive="{x:Bind ViewModel.Loading, Mode=OneWay}"/>
     </Grid>
 </Page>
 
